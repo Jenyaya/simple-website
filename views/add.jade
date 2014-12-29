@@ -1,0 +1,14 @@
+extend layout
+block add
+    .add_item
+        form(name="add-item", action="/add", method="post")
+            textarea#item-description(name="description")
+            input(type="text", name="tags")
+
+            input(type="submit", value="Add")
+block sidebar
+    .widget
+        h1 Widget
+        p
+            | Add
+            | Widget
