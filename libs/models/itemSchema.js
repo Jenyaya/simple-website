@@ -2,11 +2,12 @@ var mongoose = require('mongoose');
 
 //var mongoose = require('../db.js');
 
-var itemSchema = mongoose.Schema({
+var itemSchema = new mongoose.Schema({
     description: String,
     tags: String,
-    imageUrl: String
+    imageUrl: String,
+    date: {type: Date, default: Date.now}
 })
 
 
-module.exports.model = mongoose.model('Item', itemSchema);
+module.exports = mongoose.model('Item', itemSchema);

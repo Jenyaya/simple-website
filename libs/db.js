@@ -16,39 +16,32 @@ exports.initMongoConnection = function () {
 }
 
 
-exports.saveItem = function (itemData) {
+exports.saveItem = function (itemData, cb) {
 
-    var item = new itemModel.model(itemData);
+    var item = new itemModel(itemData);
 
     item.save(function (err, item) {
-        if (err) return console.error(err);
+        if (err) console.error(err);
+
+        cb(err, item);
     });
-   // console.log(itemData);
-}
-
-exports.findByTag = function (tag) {
-    console.log("Tags for search:" + tag);
-    itemModel.model.find({tags: /tag/}, function (err, items) {
-        if (err) return console.error(err);
-
-      //  console.log(items);
-        return items;
-    })
 
 }
 
-exports.findAll = function () {
-    console.log("search all");
-  var foundItems =  itemModel.model.find(function (err, items) {
-         if (err) return console.error(err);
-
-       // console.log(items);
-      //  return items;
-    })
-
-    return foundItems;
-
+exports.findByTag = function (cb) {
+    itemModel.find({tags: /tag/}, cb);
 }
+
+
+exports.findAll = function (cb) {
+    itemModel.find(cb);
+};
+
+exports.findById = function (id, cb) {
+    itemModel.find({_id: id}, cb);
+}
+
+
 
 
 

@@ -41,7 +41,6 @@ app.use(stylus.middleware(
 app.use(express.static(__dirname + '/public'));
 
 
-var myData = {default: 11}
 
 app.get('/', function (req, res) {
     res.render('index',
@@ -61,20 +60,19 @@ app.post('/add', function (req, res) {
         imageUrl = req.body.imageUrl,
         description = req.body.description;
 
+    db.saveItem(req.body, function(err, item) {
 
-    console.log(req.get('Content-Type'));
-    console.log(req.params);
-    //console.log(req.body);
+        console.log(item);
 
-    db.saveItem(req.body)
+        // res.set('Content-Type', "application/json");
+        res.statusCode = 201;
 
-    // res.set('Content-Type', "application/json");
-    res.statusCode = 201;
 
-    var myResponse = {description: description, tags: tags, imageUrl: imageUrl};
-    myData = myResponse
+        res.redirect('/data')
 
-    res.redirect('/data')
+    })
+
+
 
     // res.send(JSON.stringify(myResponse));
 });
@@ -84,21 +82,54 @@ app.get('/data', function (req, res) {
     //console.log(myData);
 
 
-   // var storedItem = db.findByTag(myData.tags.split(';')[0]);
-    console.log('Got from Mongo:');
-    var storedItems = db.findAll();
-    console.log(storedItems);
+    // var storedItem = db.findByTag(myData.tags.split(';')[0]);
 
-    var lastItem = storedItems[storedItems.length-1]
-
-    res.render('data',
-        {
-            imageUrl: lastItem.imageUrl,
-            descriptions: lastItem.description,
-            tags: lastItem.tags
+    db.findAll(function (err, data) {
+        if (err) {
+            return console.error(err);
         }
-    )
+
+        var lastItem = data[data.length - 1]
+
+        res.render('data',
+            {
+                imageUrl: lastItem.imageUrl,
+                descriptions: lastItem.description,
+                tags: lastItem.tags
+            }
+        )
+    });
+
+
+    //console.log('Got from Mongo:');
+
 
 })
+
+
+app.get('/data/:id', function (req, res) {
+console.log(req.params);
+
+    db.findById(req.params.id, function (err, data) {
+        if (err) {
+            return console.error(err);
+        }
+
+        console.log(data);
+
+       var item = data[0];
+
+        res.render('data',
+            {
+                imageUrl: item.imageUrl,
+                descriptions: item.description,
+                tags: item.tags
+            }
+        )
+    });
+
+
+})
+
 
 app.listen(3000);
