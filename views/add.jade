@@ -1,11 +1,23 @@
 extend layout
-block add
-    .add_item
-        form(name="add-item", action="/add", method="post")
-            textarea#item-description(name="description")
-            input(type="text", name="tags")
 
-            input(type="submit", value="Add")
+block add
+
+    form#add_item(name="add-item", action="/add", method="post", enctype="application/json")
+        p
+            | Image URL:
+        input(type="text", name="imageUrl")
+
+        p
+            | Description:
+        textarea#item-description(name="description")
+        p
+            | Tags:
+        input(type="text", name="tags")
+        br
+        br
+        input#btnSubmit(type="submit", value="Add")
+
+
 block sidebar
     .widget
         h1 Widget

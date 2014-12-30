@@ -4,8 +4,11 @@
 var express = require('express')
     , stylus = require('stylus')
     , nib = require('nib')
-  //  , bodyParser = require('body-parser')
+//  , bodyParser = require('body-parser')
     ;
+
+var db = require('./libs/db.js');
+db.initMongoConnection();
 
 var app = express();
 
@@ -37,6 +40,9 @@ app.use(stylus.middleware(
 
 app.use(express.static(__dirname + '/public'));
 
+
+var myData = {default: 11}
+
 app.get('/', function (req, res) {
     res.render('index',
         {title: 'Home'}
@@ -44,7 +50,6 @@ app.get('/', function (req, res) {
 })
 
 
-// accept POST request on the homepage
 app.get('/add', function (req, res) {
     res.render('add',
         {title: 'Add item'}
@@ -53,19 +58,47 @@ app.get('/add', function (req, res) {
 
 app.post('/add', function (req, res) {
     var tags = req.body.tags,
+        imageUrl = req.body.imageUrl,
         description = req.body.description;
 
 
     console.log(req.get('Content-Type'));
     console.log(req.params);
-    console.log(req.body);
+    //console.log(req.body);
 
-    res.set('Content-Type', "application/json");
+    db.saveItem(req.body)
+
+    // res.set('Content-Type', "application/json");
     res.statusCode = 201;
 
-    var myResponse = {description: description, tags: tags};
-    res.send(JSON.stringify(myResponse));
+    var myResponse = {description: description, tags: tags, imageUrl: imageUrl};
+    myData = myResponse
+
+    res.redirect('/data')
+
+    // res.send(JSON.stringify(myResponse));
 });
 
+
+app.get('/data', function (req, res) {
+    //console.log(myData);
+
+
+   // var storedItem = db.findByTag(myData.tags.split(';')[0]);
+    console.log('Got from Mongo:');
+    var storedItems = db.findAll();
+    console.log(storedItems);
+
+    var lastItem = storedItems[storedItems.length-1]
+
+    res.render('data',
+        {
+            imageUrl: lastItem.imageUrl,
+            descriptions: lastItem.description,
+            tags: lastItem.tags
+        }
+    )
+
+})
 
 app.listen(3000);

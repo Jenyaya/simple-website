@@ -1,0 +1,14 @@
+extend layout
+block data
+   img(src=imageUrl)
+   p
+    | Description: #{descriptions}
+   p
+    | Tag: #{tags}
+
+block sidebar
+    .widget
+        h1 Widget
+        p
+            | Added data
+            | Widget
