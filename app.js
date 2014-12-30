@@ -41,7 +41,6 @@ app.use(stylus.middleware(
 app.use(express.static(__dirname + '/public'));
 
 
-
 app.get('/', function (req, res) {
     res.render('index',
         {title: 'Home'}
@@ -60,7 +59,7 @@ app.post('/add', function (req, res) {
         imageUrl = req.body.imageUrl,
         description = req.body.description;
 
-    db.saveItem(req.body, function(err, item) {
+    db.saveItem(req.body, function (err, item) {
 
         console.log(item);
 
@@ -68,56 +67,56 @@ app.post('/add', function (req, res) {
         res.statusCode = 201;
 
 
-        res.redirect('/data')
+        res.redirect('/items/' + item._id)
 
     })
-
 
 
     // res.send(JSON.stringify(myResponse));
 });
 
 
-app.get('/data', function (req, res) {
-    //console.log(myData);
+app.get('/items', function (req, res) {
 
-
-    // var storedItem = db.findByTag(myData.tags.split(';')[0]);
-
-    db.findAll(function (err, data) {
+    db.findAll(function (err, items) {
         if (err) {
             return console.error(err);
         }
 
-        var lastItem = data[data.length - 1]
+        // var lastItem = data[data.length - 1]
 
-        res.render('data',
-            {
-                imageUrl: lastItem.imageUrl,
-                descriptions: lastItem.description,
-                tags: lastItem.tags
-            }
-        )
+        for (var i in items) {
+
+            var item = items[i]
+
+            console.log(item);
+
+            res.render('data',
+                {
+                    imageUrl: item.imageUrl,
+                    descriptions: item.description,
+                    tags: item.tags
+                }
+            )
+
+        }
+
+
     });
-
-
-    //console.log('Got from Mongo:');
 
 
 })
 
 
-app.get('/data/:id', function (req, res) {
-console.log(req.params);
+app.get('/items/:id', function (req, res) {
+
 
     db.findById(req.params.id, function (err, data) {
         if (err) {
             return console.error(err);
         }
 
-        console.log(data);
-
-       var item = data[0];
+        var item = data[0];
 
         res.render('data',
             {

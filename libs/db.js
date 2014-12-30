@@ -28,8 +28,8 @@ exports.saveItem = function (itemData, cb) {
 
 }
 
-exports.findByTag = function (cb) {
-    itemModel.find({tags: /tag/}, cb);
+exports.findByTag = function (tag, cb) {
+    itemModel.find({tags: new ReqExp(tag, i)}, cb);
 }
 
 
